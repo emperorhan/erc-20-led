@@ -1,24 +1,23 @@
-pragma solidity >=0.5.4;
+pragma solidity 0.5.16;
 
-import "@openzeppelin/token/ERC20/ERC20.sol";
-import "@openzeppelin/token/ERC20/ERC20Detailed.sol";
-import "@openzeppelin/token/ERC20/ERC20Capped.sol";
-import "@openzeppelin/token/ERC20/ERC20Burnable.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20Capped.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
+import "../node_modules/@openzeppelin/contracts/ownership/Ownable.sol";
 
 
-contract CustomToken is ERC20, ERC20Detailed, ERC20Capped, ERC20Burnable {
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals,
-        uint256 _maxSupply
-    )
+contract CustomToken is ERC20, ERC20Detailed, ERC20Capped, ERC20Burnable, Ownable {
+    constructor(string memory name, string memory symbol, uint8 decimals, uint256 maxSupply)
         public
         ERC20Burnable()
-        ERC20Capped(_maxSupply)
-        ERC20Detailed(_name, _symbol, _decimals)
+        ERC20Capped(maxSupply)
+        ERC20Detailed(name, symbol, decimals)
         ERC20()
-    {
-        _mint(msg.sender, initialSupply);
+    {}
+
+    function mint(address to, uint256 value) public onlyOwner returns (bool) {
+        _mint(to, value);
+        return true;
     }
 }

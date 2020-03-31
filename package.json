@@ -1,11 +1,35 @@
 {
-  "name": "erc-20-led",
-  "version": "1.0.0",
-  "license": "MIT",
-  "dependencies": {
-    "@openzeppelin/contracts": "^2.5.0",
-    "ganache-cli": "^6.9.1",
-    "truffle": "^5.1.19",
-    "truffle-hdwallet-provider": "^1.0.17"
-  }
+    "name": "erc-20-led",
+    "version": "1.0.0",
+    "license": "MIT",
+    "main": "truffle-config.js",
+    "directories": {
+        "test": "test"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^2.5.0",
+        "@truffle/hdwallet-provider": "^1.0.33",
+        "ganache-cli": "^6.9.1",
+        "solhint": "^2.3.1",
+        "truffle": "^5.1.14-nodeLTS.0"
+    },
+    "devDependencies": {
+        "husky": "^4.2.3",
+        "prettier": "^2.0.2",
+        "prettier-plugin-solidity": "^1.0.0-alpha.47",
+        "solhint-plugin-prettier": "^0.0.4"
+    },
+    "scripts": {
+        "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
+        "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol",
+        "dev": "./node_modules/.bin/ganache-cli -p 7545",
+        "compile": "./node_modules/.bin/truffle compile",
+        "migrate": "./node_modules/.bin/truffle migrate",
+        "test": "./node_modules/.bin/truffle test"
+    },
+    "husky": {
+        "hooks": {
+            "pre-push": "npm run prettier:solidity"
+        }
+    }
 }
