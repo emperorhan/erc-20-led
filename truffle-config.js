@@ -19,13 +19,20 @@
  */
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 // Infura.io에서 생성한 PROJECT ID를 입력
-const infuraKey = "0428327ea40c4eb0a7cf5c9eebbbdbe0";
-//
+const infuraKey = "955388b34731459a8ae1b4c4ad1a545f";
+
+// mnemonic use
 const fs = require("fs");
 const mnemonic = fs.readFileSync(".secret").toString().trim();
 
+// trezor use
+// const ropstenProviderWithTrezor = new HDWalletProvider.TrezorProvider(
+//     "m/44'/1'/0'/0/0",
+//     `https://ropsten.infura.io/v3/${infuraKey}`
+// );
+
 module.exports = {
-    plugins: ["truffle-plugin-verify"],
+    plugins: ["truffle-plugin-verify", "solidity-coverage"],
     api_keys: {
         etherscan: "DDR55HWD698R7NDGUE6A1AD97XWSZKYY63",
     },
@@ -46,11 +53,11 @@ module.exports = {
         // tab if you use this network and you must also set the `host`, `port` and `network_id`
         // options below to some value.
         //
-        // development: {
-        //     host: "127.0.0.1", // Localhost (default: none)
-        //     port: 9545, // Standard Ethereum port (default: none)
-        //     network_id: "*", // Any network (default: none)
-        // },
+        development: {
+            host: "127.0.0.1", // Localhost (default: none)
+            port: 7545, // Standard Ethereum port (default: none)
+            network_id: "*", // Any network (default: none)
+        },
 
         // Another network with more advanced options...
         // advanced: {
@@ -62,17 +69,44 @@ module.exports = {
         // websockets: true        // Enable EventEmitter interface for web3 (default: false)
         // },
 
+        // ETH Mainnet
+        // main: {
+        //     provider: () =>
+        //         new HDWalletProvider(
+        //             process.env.MNENOMIC,
+        //             `https://mainnet.infura.io/v3/${infuraKey}`
+        //         ),
+        //     network_id: 1,
+        //     gas: 3000000,
+        //     gasPrice: 10000000000,
+        // },
+
         // Useful for deploying to a public network.
         // NB: It's important to wrap the provider as a function.
+        /* Use Mnemonic */
         ropsten: {
             provider: () =>
-                new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/${infuraKey}`),
+                new HDWalletProvider(
+                    mnemonic,
+                    `https://ropsten.infura.io/v3/${infuraKey}`,
+                    1
+                ),
             network_id: 3, // Ropsten's id
             gas: 5500000, // Ropsten has a lower block limit than mainnet
             confirmations: 2, // # of confs to wait between deployments. (default: 0)
             timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
             skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
         },
+
+        /* Use Trezor */
+        // ropsten: {
+        //     provider: ropstenProviderWithTrezor,
+        //     network_id: 3, // Ropsten's id
+        //     gas: 5500000, // Ropsten has a lower block limit than mainnet
+        //     confirmations: 2, // # of confs to wait between deployments. (default: 0)
+        //     timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
+        //     skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
+        // },
 
         // Useful for private networks
         // private: {
@@ -85,6 +119,10 @@ module.exports = {
     // Set default mocha options here, use special reporters etc.
     mocha: {
         // timeout: 100000
+        reporter: "eth-gas-reporter",
+        reporterOptions: {
+            gasPrice: 21,
+        },
     },
 
     // Configure your compilers

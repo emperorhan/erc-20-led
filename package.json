@@ -9,28 +9,38 @@
     "dependencies": {
         "@openzeppelin/contracts": "^2.5.0",
         "@truffle/hdwallet-provider": "^1.0.33",
+        "eth-gas-reporter": "^0.2.17",
         "ganache-cli": "^6.9.1",
-        "solhint": "^2.3.1",
+        "solium": "^1.2.5",
         "truffle": "^5.1.14-nodeLTS.0",
-        "truffle-plugin-verify": "^0.3.10"
+        "truffle-flattener": "^1.4.4",
+        "truffle-plugin-verify": "^0.3.10",
+        "web3": "^1.2.8"
     },
     "devDependencies": {
+        "@openzeppelin/test-environment": "^0.1.4",
+        "@openzeppelin/test-helpers": "^0.5.6",
         "husky": "^4.2.3",
-        "prettier": "^2.0.2",
-        "prettier-plugin-solidity": "^1.0.0-alpha.47",
-        "solhint-plugin-prettier": "^0.0.4"
+        "solc": "^0.5.0",
+        "solidity-coverage": "^0.7.5"
     },
     "scripts": {
-        "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
-        "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol",
+        "lint": "./node_modules/.bin/solium -d contracts",
         "dev": "./node_modules/.bin/ganache-cli -p 7545",
         "compile": "./node_modules/.bin/truffle compile",
         "migrate": "./node_modules/.bin/truffle migrate",
+        "flat": "./node_modules/.bin/truffle-flattener ./contracts/LedToken.sol > ./flat/LedToken_flat.sol",
         "test": "./node_modules/.bin/truffle test"
     },
     "husky": {
         "hooks": {
-            "pre-push": "npm run prettier:solidity"
+            "pre-commit": "lint-staged"
         }
+    },
+    "lint-staged": {
+        "contracts": [
+            "solium -d",
+            "git add"
+        ]
     }
 }
